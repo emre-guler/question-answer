@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-var loginTemp = template.Must(template.ParseFiles("./view/login.html"))
+var loginTemp = template.Must(template.ParseFiles("./views/login.html"))
 
 func main() {
 	port := os.Getenv("PORT")
@@ -19,11 +19,14 @@ func main() {
 	http.ListenAndServe((":" + port), mux)
 }
 
+// TODO Login with X platform
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
+		loginTemp.Execute(w, nil)
 	case "POST":
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("405: Method not allowed."))
 	}
 }
