@@ -53,8 +53,8 @@ func ghHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, ("http://localhost:" + port + "/login"), http.StatusSeeOther)
 		}
 		cbCode := r.URL.Query().Get("code")
-		requValues := url.Values{"client_id": {githubRequestUrl}, "client_secret": {githubClientSecret}, "code": {cbCode}, "accept": {"json"}}
-		req, _ := http.NewRequest("POST", "https://github.com/login/oauth/access_token", strings.NewReader(requValues.Encode()))
+		reqValues := url.Values{"client_id": {githubClientId}, "client_secret": {githubClientSecret}, "code": {cbCode}, "accept": {"json"}}
+		req, _ := http.NewRequest("POST", "https://github.com/login/oauth/access_token", strings.NewReader(reqValues.Encode()))
 		req.Header.Set(
 			"Accept", "application/json")
 		res, err := http.DefaultClient.Do(req)
