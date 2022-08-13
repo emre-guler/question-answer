@@ -1,35 +1,29 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
-	"github.com/emre-guler/question-answer/endpoints"
+	middleweare "github.com/emre-guler/question-answer/middleware"
+	routes "github.com/emre-guler/question-answer/routes"
+
+	"github.com/gin-gonic/gin"
 )
 
 var port string = os.Getenv("PORT")
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/login", loginHandler)
-	mux.HandleFunc("/gh-callback", ghHandler)
-	http.ListenAndServe((":" + port), mux)
-}
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		endpoints.LoginPageGET(w)
-	default:
-		endpoints.MethodNotAllowed(w)
-	}
-}
+	router := gin.Default()
 
-func ghHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		endpoints.CallbackGET(w, r)
-	default:
-		endpoints.MethodNotAllowed(w)
-	}
+	router.Static("/statics", "./statics")
+	router.LoadHTMLGlob("/templates/*.gohtml")
+
+	public := router.Group("/")
+	routes.PublicRoutes(public)
+
+	private := router.Group("/")
+	private.Use(middleweare.AuthRequired)
+	routes.PrivateRoutes(private)
+
+	router.Run(("localhost:" + port))
 }
