@@ -24,9 +24,9 @@ const githubAccesTokenUrl string = "https://github.com/login/oauth/access_token"
 
 func LoginGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var loginVm = models.LoginPageViewModel{GithubRequestUrl: githubRequestUrl + githubClientId}
+		var githubRequestUrl string = githubRequestUrl + githubClientId
 		ctx.HTML(http.StatusOK, "login.gohtml", gin.H{
-			"GithubRequestUrl": loginVm,
+			"GithubRequestUrl": githubRequestUrl,
 		})
 	}
 }
@@ -71,6 +71,7 @@ func CallbackGetHandler() gin.HandlerFunc {
 			return
 		}
 
+		log.Println("scope: ", access.Scope)
 		if access.Scope != "read:user" {
 			log.Println("Wrong authority, scope error: ", access.Scope)
 			ctx.Redirect(http.StatusMovedPermanently, "/login")

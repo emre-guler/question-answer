@@ -12,11 +12,10 @@ import (
 var port string = os.Getenv("PORT")
 
 func main() {
-
 	router := gin.Default()
 
-	router.Static("/statics", "./statics")
-	router.LoadHTMLGlob("/templates/*.gohtml")
+	// router.Static("/statics", "./statics")
+	router.LoadHTMLGlob("./templates/*.gohtml")
 
 	public := router.Group("/")
 	routes.PublicRoutes(public)
