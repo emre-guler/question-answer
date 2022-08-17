@@ -33,14 +33,20 @@ func LoginGetHandler() gin.HandlerFunc {
 
 func CallbackGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		errParam, err := ctx.Params.Get("error")
+		errParam := ctx.Query("error")
 		if errParam != "" {
-			log.Println("Github callback error: ", err)
+			log.Println("Github callback error.")
 			ctx.Redirect(http.StatusMovedPermanently, "/login")
 			return
 		}
 
-		codeParam, _ := ctx.Params.Get("code")
+		codeParam := ctx.Query("code")
+		if codeParam == "" {
+			log.Println("Github callback error: ")
+			ctx.Redirect(http.StatusMovedPermanently, "/login")
+			return
+		}
+
 		reqValues := url.Values{
 			"client_id":     {githubClientId},
 			"client_secret": {githubClientSecret},
@@ -71,7 +77,6 @@ func CallbackGetHandler() gin.HandlerFunc {
 			return
 		}
 
-		log.Println("scope: ", access.Scope)
 		if access.Scope != "read:user" {
 			log.Println("Wrong authority, scope error: ", access.Scope)
 			ctx.Redirect(http.StatusMovedPermanently, "/login")
