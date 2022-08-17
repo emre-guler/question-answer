@@ -29,7 +29,8 @@ func GetUserData(client *github.Client, background context.Context, accessToken 
 	newUser.ProfileUrl = user.GetURL()
 	newUser.FullName = user.GetName()
 	newUser.Company = user.GetCompany()
+	newUser.GithubId = user.GetID()
 	newUser.Location = user.GetLocation()
 
-	return newUser, nil
+	eturn newUser, nil
 }

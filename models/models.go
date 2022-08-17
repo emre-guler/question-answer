@@ -7,6 +7,7 @@ type Access struct {
 
 type User struct {
 	AccessToken string
+	GithubId    int
 	AvatarUrl   string
 	ProfileUrl  string
 	FullName    string
