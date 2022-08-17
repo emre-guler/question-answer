@@ -32,5 +32,5 @@ func GetUserData(client *github.Client, background context.Context, accessToken 
 	newUser.GithubId = user.GetID()
 	newUser.Location = user.GetLocation()
 
-	eturn newUser, nil
+	return newUser, nil
 }

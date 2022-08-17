@@ -29,7 +29,7 @@ func InsertUser(userData *models.User) bool {
 	return true
 }
 
-func IsUserExist(githubId int) (bool, error) {
+func IsUserExist(githubId int64) (bool, error) {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(applyUri))
 	if err != nil {
 		log.Println("Database connection failed: ", err)
