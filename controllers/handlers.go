@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -11,7 +10,8 @@ import (
 	"strings"
 
 	"github.com/emre-guler/question-answer/models"
-	githubservice "github.com/emre-guler/question-answer/service"
+	"github.com/emre-guler/question-answer/service/dbservice"
+	"github.com/emre-guler/question-answer/service/githubservice"
 	"github.com/gin-gonic/gin"
 )
 
@@ -67,6 +67,7 @@ func CallbackGetHandler() gin.HandlerFunc {
 		if res.StatusCode != http.StatusOK {
 			log.Println("Github token request error: ", res.StatusCode)
 			ctx.Redirect(http.StatusMovedPermanently, "/login")
+			return
 		}
 
 		var access models.Access
@@ -91,6 +92,13 @@ func CallbackGetHandler() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(userData)
+		result := dbservice.InsertUser(userData)
+		if !result {
+			// Loglama zaten yukarıdaki servisin içerisinde yapılıyor.
+			ctx.Redirect(http.StatusMovedPermanently, "/login")
+			return
+		}
+
+		// TODO Login işlemleri...
 	}
 }
