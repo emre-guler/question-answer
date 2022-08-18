@@ -9,9 +9,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/emre-guler/question-answer/globals"
 	"github.com/emre-guler/question-answer/models"
 	"github.com/emre-guler/question-answer/service/dbservice"
 	"github.com/emre-guler/question-answer/service/githubservice"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,6 +26,10 @@ const githubAccesTokenUrl string = "https://github.com/login/oauth/access_token"
 
 func LoginGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		isLoggedIn := IsLoggedIn(ctx)
+		if isLoggedIn {
+			ctx.Redirect(http.StatusMovedPermanently, "/app")
+		}
 		var githubRequestUrl string = githubRequestUrl + githubClientId
 		ctx.HTML(http.StatusOK, "login.gohtml", gin.H{
 			"GithubRequestUrl": githubRequestUrl,
@@ -33,6 +39,10 @@ func LoginGetHandler() gin.HandlerFunc {
 
 func CallbackGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		isLoggedIn := IsLoggedIn(ctx)
+		if isLoggedIn {
+			ctx.Redirect(http.StatusMovedPermanently, "/app")
+		}
 		errParam := ctx.Query("error")
 		if errParam != "" {
 			log.Println("Github callback error.")
@@ -110,5 +120,16 @@ func CallbackGetHandler() gin.HandlerFunc {
 		}
 
 		// TODO Login işlemleri...
+		session := sessions.Default(ctx)
+		session.Set(globals.Userkey, userData.GithubId)
+		session.Save()
+
+		ctx.Redirect(http.StatusMovedPermanently, "/app")
 	}
+}
+
+func IsLoggedIn(ctx *gin.Context) bool {
+	session := sessions.Default(ctx)
+	user := session.Get(globals.Userkey)
+	return user != nil
 }

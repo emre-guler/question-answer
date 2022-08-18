@@ -1,15 +1,16 @@
 package routes
 
 import (
-	"github.com/emre-guler/question-answer/controllers"
+	appHandlers "github.com/emre-guler/question-answer/controllers/appHandlers"
+	loginHandlers "github.com/emre-guler/question-answer/controllers/loginHandlers"
 	"github.com/gin-gonic/gin"
 )
 
 func PublicRoutes(g *gin.RouterGroup) {
-	g.GET("/login", controllers.LoginGetHandler())
-	g.GET("/callback", controllers.CallbackGetHandler())
+	g.GET("/login", loginHandlers.LoginGetHandler())
+	g.GET("/callback", loginHandlers.CallbackGetHandler())
 }
 
 func PrivateRoutes(g *gin.RouterGroup) {
-
+	g.GET("/app", appHandlers.AppGetHandler())
 }
