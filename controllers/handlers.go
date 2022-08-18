@@ -91,12 +91,7 @@ func CallbackGetHandler() gin.HandlerFunc {
 			ctx.Redirect(http.StatusMovedPermanently, "/login")
 			return
 		}
-		isUserExist, err := dbservice.IsUserExist(userData.GithubId)
-		if err != nil {
-			// Loglama zaten yukarıdaki servisin içerisinde yapılıyor.
-			ctx.Redirect(http.StatusMovedPermanently, "/login")
-			return
-		}
+		isUserExist := dbservice.IsUserExist(userData.GithubId)
 		if !isUserExist {
 			// Bu user daha önce kayıt olmamış ise
 			result := dbservice.InsertUser(userData)

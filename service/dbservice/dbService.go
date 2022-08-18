@@ -2,7 +2,6 @@ package dbservice
 
 import (
 	"context"
-	"errors"
 	"log"
 	"os"
 
@@ -29,7 +28,7 @@ func InsertUser(userData *models.User) bool {
 	return true
 }
 
-func IsUserExist(githubId int64) (bool, error) {
+func IsUserExist(githubId int64) bool {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(applyUri))
 	if err != nil {
 		log.Println("Database connection failed: ", err)
@@ -38,14 +37,8 @@ func IsUserExist(githubId int64) (bool, error) {
 	filter := bson.D{{Key: "githubid", Value: githubId}}
 	var result bson.D
 	err = userCollection.FindOne(context.TODO(), filter).Decode(&result)
-	if err != nil {
-		log.Println("Select failed: ", err)
-		return true, errors.New("select process faield")
-	}
-	if result != nil {
-		return true, nil
-	}
-	return false, nil
+
+	return err == nil
 }
 
 func UpdateUserAccessToken(userData *models.User) bool {
@@ -57,9 +50,14 @@ func UpdateUserAccessToken(userData *models.User) bool {
 
 	userCollection := client.Database("question-answer").Collection("users")
 	filter := bson.D{{Key: "githubid", Value: userData.GithubId}}
-	update := bson.D{{Key: "accesstoken", Value: userData.AccessToken}}
-	var result bson.D
-	err = userCollection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&result)
+	update := bson.D{
+		{Key: "$set",
+			Value: bson.D{
+				{Key: "accesstoken", Value: userData.AccessToken},
+			},
+		},
+	}
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Println("Update failed: ", err)
 		return false
