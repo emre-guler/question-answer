@@ -28,7 +28,7 @@ func LoginGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		isLoggedIn := IsLoggedIn(ctx)
 		if isLoggedIn {
-			ctx.Redirect(http.StatusMovedPermanently, "/app")
+			ctx.Redirect(http.StatusMovedPermanently, "/main")
 		}
 		var githubRequestUrl string = githubRequestUrl + githubClientId
 		ctx.HTML(http.StatusOK, "login.gohtml", gin.H{
@@ -41,7 +41,7 @@ func CallbackGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		isLoggedIn := IsLoggedIn(ctx)
 		if isLoggedIn {
-			ctx.Redirect(http.StatusMovedPermanently, "/app")
+			ctx.Redirect(http.StatusMovedPermanently, "/main")
 		}
 		errParam := ctx.Query("error")
 		if errParam != "" {
@@ -119,12 +119,11 @@ func CallbackGetHandler() gin.HandlerFunc {
 			}
 		}
 
-		// TODO Login işlemleri...
 		session := sessions.Default(ctx)
 		session.Set(globals.Userkey, userData.GithubId)
 		session.Save()
 
-		ctx.Redirect(http.StatusMovedPermanently, "/app")
+		ctx.Redirect(http.StatusMovedPermanently, "/main")
 	}
 }
 

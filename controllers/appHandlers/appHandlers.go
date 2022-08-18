@@ -1,13 +1,19 @@
 package controllers
 
 import (
-	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AppGetHandler() gin.HandlerFunc {
+func MainGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		log.Println("Hello World!")
+		ctx.HTML(http.StatusOK, "main.gohtml", nil)
+	}
+}
+
+func MainPostHandler() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
 	}
 }

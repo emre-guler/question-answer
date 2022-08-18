@@ -12,5 +12,6 @@ func PublicRoutes(g *gin.RouterGroup) {
 }
 
 func PrivateRoutes(g *gin.RouterGroup) {
-	g.GET("/app", appHandlers.AppGetHandler())
+	g.GET("/main", appHandlers.MainGetHandler())
+	g.POST("/main", appHandlers.MainPostHandler())
 }
